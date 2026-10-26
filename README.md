@@ -1,11 +1,13 @@
 # 💸 Finanzas Zero — Showcase
 
 <p align="center">
-  <strong>Control de gastos personales con selector mensual, optimizado para Argentina.</strong><br>
-  Una experiencia móvil nativa, rápida y minimalista construida con Jetpack Compose y Room SQLite.
+  <strong>Control de gastos personales con selector mensual y exportación de informes PDF, optimizado para Argentina.</strong><br>
+  Una experiencia móvil nativa, rápida y minimalista construida con Kotlin, Jetpack Compose y Room SQLite.
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/Versi%C3%B3n-1.0.0--beta.1-blue?style=for-the-badge" alt="Versión 1.0.0-beta.1">
+  <img src="https://img.shields.io/badge/Estado-Beta-orange?style=for-the-badge" alt="Estado Beta">
   <img src="https://img.shields.io/badge/Plataforma-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
   <img src="https://img.shields.io/badge/Lenguaje-Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin">
   <img src="https://img.shields.io/badge/UI-Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Jetpack Compose">
@@ -22,7 +24,7 @@
 
 El proyecto adopta una filosofía de diseño rigurosamente minimalista (*anti-slop*): interfaces monocromáticas de alto contraste basadas en la paleta Zinc, sin gradientes recargados ni artificios visuales, priorizando la velocidad operativa, la respuesta inmediata al toque y la claridad informativa.
 
-La persistencia de los registros es completamente local mediante una base de datos SQLite administrada por Room. La aplicación cuenta con navegación temporal por meses históricos, panel de configuración personalizable (temas visuales, confirmación de borrado, exportación a CSV) y un panel inferior permanente para registrar gastos manuales en tres pasos.
+La persistencia de los registros es completamente local mediante una base de datos SQLite administrada por Room. La aplicación cuenta con navegación temporal por meses históricos, panel de configuración personalizable (temas visuales, confirmación de borrado, exportación de informes PDF profesionales) y un panel inferior permanente para registrar gastos manuales en tres pasos.
 
 ---
 
@@ -33,7 +35,8 @@ La persistencia de los registros es completamente local mediante una base de dat
 - **Gráfico de Dona Interactivo:** Análisis visual de la distribución del gasto por categorías mediante Compose Canvas, con cálculo automático de porcentajes y cantidades según el mes activo.
 - **Registro Rápido sin Fricción:** Entrada manual con teclado numérico optimizado, chips de categoría con objetivo táctil accesible y notas descriptivas opcionales.
 - **Historial Completo con Edición y Eliminación:** Listado cronológico de movimientos filtrados por mes, con soporte para modificar importes, categorías o notas mediante diálogos modales.
-- **Pantalla de Configuración:** Gestión de apariencia (Sistema, Claro, Oscuro), confirmación antes de eliminar gastos, exportación general de datos a CSV e información de versión.
+- **Exportación de Informes en PDF:** Generación de resúmenes formales en formato PDF estándar A4 con métricas clave, desglose por categoría y detalle de transacciones con paginación automática mediante el Storage Access Framework.
+- **Pantalla de Configuración:** Gestión de apariencia (Sistema, Claro, Oscuro), confirmación antes de eliminar gastos, exportación general de datos a PDF e información de versión.
 - **Persistencia Confiable:** Almacenamiento local directo en SQLite con Android Room 2.7.0.
 
 ---
@@ -43,7 +46,7 @@ La persistencia de los registros es completamente local mediante una base de dat
 - **Almacenamiento Local de Transacciones:** Todos los gastos, montos, notas, fechas y categorías residen exclusivamente en la base de datos local SQLite del dispositivo.
 - **Operación 100% Offline:** La aplicación no realiza llamadas de red, no utiliza servicios en la nube ni requiere conexión a internet para ninguna de sus funciones.
 - **Cero Permisos Sensibles:** No solicita permisos de micrófono, cámara, ubicación ni acceso a almacenamiento compartido en tiempo de ejecución.
-- **Exportación Segura:** La exportación CSV delega el archivo al destino elegido por el usuario a través de la hoja de compartir del sistema (`Intent.ACTION_SEND`), sin almacenar archivos públicos en el dispositivo.
+- **Exportación Segura mediante SAF:** La exportación a PDF delega la creación del archivo directamente al usuario a través del **Storage Access Framework** (`ACTION_CREATE_DOCUMENT`), permitiendo elegir el destino (almacenamiento local o en la nube) sin solicitar permisos generales de escritura en disco (`WRITE_EXTERNAL_STORAGE`).
 
 ---
 
@@ -68,6 +71,18 @@ El dashboard incluye un selector de mes en su cabecera:
 
 ---
 
+## 📄 Exportación de Informes en PDF
+
+Finanzas Zero incorpora un generador nativo de reportes en formato PDF estándar A4 (`595 x 842 pt`), diseñado para imprimir, archivar o compartir resúmenes financieros sin dependencias de servicios externos:
+
+- **Encabezado institucional:** Título formal, fecha de emisión y rango temporal evaluado.
+- **Resumen ejecutivo:** Tarjeta con cuatro métricas consolidadas: total gastado en ARS, cantidad de transacciones, promedio por operación y categoría con mayor impacto presupuestario.
+- **Desglose analítico por categoría:** Tabla estructurada con el gasto total y porcentaje de incidencia para cada uno de los 6 rubros.
+- **Detalle de movimientos y paginación continua:** Listado de transacciones con fecha, descripción, categoría y monto formateado en moneda local. Incluye cálculo dinámico de capacidad por página para evitar cortes abruptos y truncamiento elíptico seguro (`…`) para notas extensas.
+- **Integración con Storage Access Framework (SAF):** Permite al usuario guardar el archivo con nombre sugerido `finanzas-zero-resumen-YYYY-MM-DD.pdf` en cualquier carpeta local o proveedor de almacenamiento en la nube.
+
+---
+
 ## ⚙️ Pantalla de Configuración
 
 Accesible mediante el ícono de engranaje en la cabecera:
@@ -78,10 +93,10 @@ Accesible mediante el ícono de engranaje en la cabecera:
    - La selección se aplica de inmediato y se conserva entre sesiones mediante `SharedPreferences`.
 2. **Confirmar antes de eliminar:**
    - Interruptor configurable (activado por defecto) que previene borrados accidentales mostrando un diálogo de confirmación con los detalles del movimiento.
-3. **Exportación a CSV:**
-   - Genera un reporte en texto plano con la totalidad de los gastos registrados en la base de datos (fecha con formato local, monto, categoría y notas escapadas bajo estándar RFC 4180 con BOM UTF-8) y abre el diálogo nativo de Android para compartir.
+3. **Exportar resumen PDF:**
+   - Dispara el selector nativo de documentos de Android (`CreateDocument`) para generar y persistir el informe PDF estructurado de manera instantánea.
 4. **Acerca de la app:**
-   - Muestra la versión real del proyecto obtenida de la configuración de compilación.
+   - Muestra la versión real del proyecto (`1.0.0-beta.1`) obtenida directamente de la configuración de compilación.
 
 ---
 
@@ -100,6 +115,16 @@ El panel principal organiza la información con jerarquía estricta:
 
 ---
 
+## 🏷️ Versionado Semántico y Estado del Proyecto
+
+Finanzas Zero adopta la especificación de **Versionado Semántico (SemVer)**: `MAJOR.MINOR.PATCH`, complementado con etiquetas para versiones preliminares:
+
+- **Versión actual:** `1.0.0-beta.1`
+- **Código de versión:** `versionCode = 2`
+- **Estado de desarrollo:** **Fase Beta** — Funcionalidades troncales completas, interfaz validada en dispositivos emulados y suite de pruebas unitarias automatizadas (15/15 pruebas aprobadas).
+
+---
+
 ## 🛠️ Tecnologías Utilizadas
 
 - **Lenguaje:** Kotlin (100%).
@@ -107,8 +132,10 @@ El panel principal organiza la información con jerarquía estricta:
 - **Arquitectura:** MVVM (Model-View-ViewModel) con Clean Repository Pattern.
 - **Programación Asincrónica:** Kotlin Coroutines y StateFlow reactivo.
 - **Persistencia Local:** Android Room Database (2.7.0) con SQLite y consultas reactivas Flow.
+- **Generación de Documentos:** `android.graphics.pdf.PdfDocument` nativo de Android.
+- **Integración con el Sistema:** Storage Access Framework (`ActivityResultContracts.CreateDocument`).
 - **Persistencia de Preferencias:** SharedPreferences de Android para configuración de usuario.
-- **Compilación:** Gradle (Kotlin DSL), KSP (Kotlin Symbol Processing), AGP 9 y R8/ProGuard optimizado.
+- **Compilación y Optimizaciones:** Gradle (Kotlin DSL), KSP (Kotlin Symbol Processing), AGP 9 y R8/ProGuard optimizado.
 
 ---
 
@@ -134,6 +161,7 @@ El panel principal organiza la información con jerarquía estricta:
 │            │            │             │  (SharedPrefs)    │
 │            ▼            │             └───────────────────┘
 │       ExpenseDao        │
+│     & PdfExporter       │
 │            │            │
 │            ▼            │
 │ Base de Datos Room      │
@@ -190,7 +218,7 @@ Diálogo modal reactivo accesible desde cualquier movimiento del historial mensu
 </table>
 
 ### 3. Pantalla de Configuración y Preferencias
-Panel de ajustes de la aplicación: selector de tema visual (Sistema, Claro, Oscuro) con guardado persistente en `SharedPreferences`, interruptor de confirmación previa para eliminación de gastos, exportación integral a CSV compatible con RFC 4180 e información de versión de compilación.
+Panel de ajustes de la aplicación: selector de tema visual (Sistema, Claro, Oscuro) con guardado persistente en `SharedPreferences`, interruptor de confirmación previa para eliminación de gastos, exportación a informe PDF profesional A4 mediante selector nativo de documentos e información de versión de compilación (`1.0.0-beta.1`).
 
 <table align="center">
   <thead>
