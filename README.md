@@ -1,66 +1,218 @@
-# 💸 Finanzas Zero
+# 💸 Finanzas Zero — Showcase
 
-**Control de gastos personales con IA y voz, pensado para Argentina.**
+<p align="center">
+  <strong>Control de gastos personales con selector mensual, optimizado para Argentina.</strong><br>
+  Una experiencia móvil nativa, rápida y minimalista construida con Jetpack Compose y Room SQLite.
+</p>
 
-Finanzas Zero es una aplicación nativa para Android que combina una interfaz minimalista, almacenamiento local de gastos y funciones de inteligencia artificial para registrar movimientos y consultar resúmenes mediante texto o voz.
+<p align="center">
+  <img src="https://img.shields.io/badge/Plataforma-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
+  <img src="https://img.shields.io/badge/Lenguaje-Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin">
+  <img src="https://img.shields.io/badge/UI-Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Jetpack Compose">
+  <img src="https://img.shields.io/badge/Diseño-Material%203-757575?style=for-the-badge&logo=materialdesign&logoColor=white" alt="Material 3">
+  <img src="https://img.shields.io/badge/Base%20de%20Datos-Room%20SQLite-4479A1?style=for-the-badge" alt="Room SQLite">
+  <img src="https://img.shields.io/badge/Privacidad-100%25%20Offline-10B981?style=for-the-badge" alt="100% Offline">
+</p>
 
-> Este repositorio es una presentación pública del proyecto. No contiene el código fuente ni ofrece una descarga del APK.
+---
 
-## Funcionalidades
+## 📌 Descripción del Proyecto
 
-- Dashboard con el total de gastos registrados y distribución por categoría.
-- Gráfico de dona para comparar categorías.
-- Registro manual con monto, categoría y nota.
-- Historial de movimientos con edición y eliminación.
-- Registro por voz con interpretación del importe, concepto y categoría.
-- Asistente financiero con consultas en lenguaje natural.
-- Modo manos libres con respuestas habladas en español rioplatense.
-- Catálogo contextual de comercios y conceptos habituales en Argentina.
+**Finanzas Zero** es una aplicación móvil nativa para Android diseñada para resolver la fricción cotidiana al registrar, categorizar y analizar gastos personales en pesos argentinos (ARS).
 
-## Capturas de pantalla
+El proyecto adopta una filosofía de diseño rigurosamente minimalista (*anti-slop*): interfaces monocromáticas de alto contraste basadas en la paleta Zinc, sin gradientes recargados ni artificios visuales, priorizando la velocidad operativa, la respuesta inmediata al toque y la claridad informativa.
 
-Las capturas reales se agregarán próximamente:
-- Dashboard y gráfico por categorías.
-- Registro manual de gastos.
-- Asistente financiero y modo por voz.
+La persistencia de los registros es completamente local mediante una base de datos SQLite administrada por Room. La aplicación cuenta con navegación temporal por meses históricos, panel de configuración personalizable (temas visuales, confirmación de borrado, exportación a CSV) y un panel inferior permanente para registrar gastos manuales en tres pasos.
 
-## Arquitectura general
+---
 
-```mermaid
-flowchart TD
-    A[Jetpack Compose] --> B[FinanceViewModel]
-    B --> C[FinanceRepository]
-    C --> D[ExpenseDao]
-    D --> E[(Room / SQLite)]
-    B --> F[Servicios Gemini]
-    F --> G[API de Google Gemini]
+## ✨ Funcionalidades Principales
+
+- **Selector Mensual Dinámico:** Consulta interactiva del mes actual y meses históricos anteriores mediante controles accesibles, recalculando al instante métricas, promedios y gráficos.
+- **Dashboard Financiero del Mes:** Visualización instantánea del gasto total acumulado en el mes seleccionado, cantidad de movimientos y promedio por operación.
+- **Gráfico de Dona Interactivo:** Análisis visual de la distribución del gasto por categorías mediante Compose Canvas, con cálculo automático de porcentajes y cantidades según el mes activo.
+- **Registro Rápido sin Fricción:** Entrada manual con teclado numérico optimizado, chips de categoría con objetivo táctil accesible y notas descriptivas opcionales.
+- **Historial Completo con Edición y Eliminación:** Listado cronológico de movimientos filtrados por mes, con soporte para modificar importes, categorías o notas mediante diálogos modales.
+- **Pantalla de Configuración:** Gestión de apariencia (Sistema, Claro, Oscuro), confirmación antes de eliminar gastos, exportación general de datos a CSV e información de versión.
+- **Persistencia Confiable:** Almacenamiento local directo en SQLite con Android Room 2.7.0.
+
+---
+
+## 🔒 Privacidad y Flujo de Datos
+
+- **Almacenamiento Local de Transacciones:** Todos los gastos, montos, notas, fechas y categorías residen exclusivamente en la base de datos local SQLite del dispositivo.
+- **Operación 100% Offline:** La aplicación no realiza llamadas de red, no utiliza servicios en la nube ni requiere conexión a internet para ninguna de sus funciones.
+- **Cero Permisos Sensibles:** No solicita permisos de micrófono, cámara, ubicación ni acceso a almacenamiento compartido en tiempo de ejecución.
+- **Exportación Segura:** La exportación CSV delega el archivo al destino elegido por el usuario a través de la hoja de compartir del sistema (`Intent.ACTION_SEND`), sin almacenar archivos públicos en el dispositivo.
+
+---
+
+## 📅 Selector Mensual y Filtrado Temporal
+
+El dashboard incluye un selector de mes en su cabecera:
+- **Visualización en español:** Muestra el mes y año en curso (ej. *Octubre 2026*).
+- **Navegación histórica:** Permite retroceder a cualquier mes anterior con registros o meses intermedios.
+- **Límite al presente:** La navegación hacia meses futuros se encuentra deshabilitada para evitar selecciones inconsistentes.
+- **Retorno rápido:** Botón accesible para regresar en un toque al mes actual desde cualquier período histórico.
+- **Sincronización al registrar:** Si el usuario consulta un mes pasado y carga un nuevo gasto, la aplicación lo guarda con su fecha y hora real y reubica automáticamente la vista en el mes actual para verificar el movimiento de inmediato.
+- **Meses sin movimientos:** Muestra valores en cero y un mensaje explicativo claro: *«No hay gastos registrados en este mes»*.
+
+---
+
+## ✍️ Registro de Gastos: Entrada Manual Rápida
+
+- **Teclado numérico decimal:** Directo y sin intermediarios, con validación inmediata de importes mayores a cero.
+- **Selector horizontal de categorías:** Toque único con iconos semánticos de Material 3 y área táctil mínima de 48 dp.
+- **Campo de notas opcional:** Espacio para detallar el comercio o concepto (ej. *Almuerzo*, *Supermercado*).
+- **Guardado en un solo paso:** Disponible permanentemente en la parte inferior de la pantalla principal (`QuickEntryDrawer`), actualizando las métricas al instante.
+
+---
+
+## ⚙️ Pantalla de Configuración
+
+Accesible mediante el ícono de engranaje en la cabecera:
+1. **Apariencia / Tema:**
+   - *Seguir el sistema*: se adapta dinámicamente a la preferencia de Android.
+   - *Tema Claro*: interfaz de alto contraste sobre fondo blanco.
+   - *Tema Oscuro*: paleta Zinc oscura para confort visual en baja luz.
+   - La selección se aplica de inmediato y se conserva entre sesiones mediante `SharedPreferences`.
+2. **Confirmar antes de eliminar:**
+   - Interruptor configurable (activado por defecto) que previene borrados accidentales mostrando un diálogo de confirmación con los detalles del movimiento.
+3. **Exportación a CSV:**
+   - Genera un reporte en texto plano con la totalidad de los gastos registrados en la base de datos (fecha con formato local, monto, categoría y notas escapadas bajo estándar RFC 4180 con BOM UTF-8) y abre el diálogo nativo de Android para compartir.
+4. **Acerca de la app:**
+   - Muestra la versión real del proyecto obtenida de la configuración de compilación.
+
+---
+
+## 📊 Dashboard y Gráficos
+
+El panel principal organiza la información con jerarquía estricta:
+1. **Tarjeta de Impacto (Total del Mes):** Suma total de los gastos del mes seleccionado, conteo de movimientos y promedio monetario por operación.
+2. **Distribución por Categorías:** Gráfico de anillo (*donut chart*) renderizado con Jetpack Compose Canvas con microanimaciones, complementado por insignias de porcentaje y totales por rubro:
+   - 🍽️ **Comida:** Alimentos, restaurantes y delivery.
+   - 🚗 **Transporte:** Nafta, viajes en auto, peajes y transporte público.
+   - 📺 **Suscripciones:** Servicios digitales, streaming y software.
+   - 🎟️ **Entretenimiento:** Cines, eventos, recitales y salidas.
+   - 📈 **Finanzas:** Inversiones, cuentas y transferencias.
+   - 📦 **Otros:** Compras generales e indumentaria.
+3. **Historial de Movimientos:** Lista cronológica del mes seleccionado con fechas relativas (*Hoy*, *Ayer*) y accesos directos de edición y borrado.
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+
+- **Lenguaje:** Kotlin (100%).
+- **UI:** Jetpack Compose con Material Design 3 (M3) y paleta Zinc monocromática.
+- **Arquitectura:** MVVM (Model-View-ViewModel) con Clean Repository Pattern.
+- **Programación Asincrónica:** Kotlin Coroutines y StateFlow reactivo.
+- **Persistencia Local:** Android Room Database (2.7.0) con SQLite y consultas reactivas Flow.
+- **Persistencia de Preferencias:** SharedPreferences de Android para configuración de usuario.
+- **Compilación:** Gradle (Kotlin DSL), KSP (Kotlin Symbol Processing), AGP 9 y R8/ProGuard optimizado.
+
+---
+
+## 🏗️ Arquitectura del Sistema
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     Capa de Interfaz (UI)                       │
+│  FinanceDashboardScreen ── SettingsScreen ── DonutChart Canvas │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │ Eventos / StateFlow
+                                 ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Capa de Lógica (ViewModel)                   │
+│                     FinanceViewModel                            │
+│    (Selector mensual, estado de edición, flujos reactivos)      │
+└───────────────┬─────────────────────────────────┬───────────────┘
+                │                                 │
+                ▼                                 ▼
+┌─────────────────────────┐             ┌───────────────────┐
+│ Capa de Datos y Dominio │             │ Capa Preferencias │
+│    FinanceRepository    │             │   UserPrefsRepo   │
+│            │            │             │  (SharedPrefs)    │
+│            ▼            │             └───────────────────┘
+│       ExpenseDao        │
+│            │            │
+│            ▼            │
+│ Base de Datos Room      │
+│        (SQLite)         │
+└─────────────────────────┘
 ```
 
-## Tecnologías
+---
 
-| Área | Tecnología |
-|---|---|
-| Lenguaje | Kotlin |
-| Interfaz | Jetpack Compose y Material 3 |
-| Estado y asincronía | ViewModel, Coroutines y Flow |
-| Persistencia local | Room y SQLite |
-| IA | Google Gemini API |
-| Audio | APIs nativas de Android y Gemini TTS |
-| Red | OkHttp |
-| Construcción | Gradle Kotlin DSL y KSP |
+## 📸 Capturas de Pantalla
 
-## Privacidad y flujo de datos
+### 1. Dashboard Principal y Registro Rápido
+Resumen mensual consolidado (gasto total en ARS, cantidad de movimientos y promedio por operación), selector dinámico de mes con navegación histórica, gráfico de dona interactivo por categorías (`CategoryDonutChart`) y panel inferior permanente `QuickEntryDrawer` para la carga rápida de gastos con chips táctiles y teclado decimal optimizado.
 
-Los movimientos de gastos se guardan localmente en el dispositivo mediante Room/SQLite. La aplicación no sincroniza esa base de datos con un backend multiusuario.
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center">Modo Claro</th>
+      <th align="center">Modo Oscuro</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">
+        <img src="assets/dashboard-light.png" alt="Dashboard Principal - Modo Claro" width="380" />
+      </td>
+      <td align="center">
+        <img src="assets/dashboard-dark.png" alt="Dashboard Principal - Modo Oscuro" width="380" />
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-Al usar las funciones de IA, se transmiten fragmentos de audio y contexto financiero —por ejemplo, totales, desglose por categoría y movimientos recientes— a Google Gemini mediante HTTPS para su procesamiento. Tené en cuenta este flujo antes de usar información financiera sensible.
+### 2. Diálogo de Edición de Registro
+Diálogo modal reactivo accesible desde cualquier movimiento del historial mensual, permitiendo corregir el importe, cambiar la categoría semántica o actualizar notas descriptivas en tiempo real.
 
-## Objetivo
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center">Modo Claro</th>
+      <th align="center">Modo Oscuro</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">
+        <img src="assets/editar-registro-light.png" alt="Edición de Registro - Modo Claro" width="380" />
+      </td>
+      <td align="center">
+        <img src="assets/editar-registro-dark.png" alt="Edición de Registro - Modo Oscuro" width="380" />
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-El proyecto explora cómo combinar una experiencia Android nativa, persistencia local e IA multimodal para simplificar tareas cotidianas como registrar gastos y consultar un resumen financiero.
+### 3. Pantalla de Configuración y Preferencias
+Panel de ajustes de la aplicación: selector de tema visual (Sistema, Claro, Oscuro) con guardado persistente en `SharedPreferences`, interruptor de confirmación previa para eliminación de gastos, exportación integral a CSV compatible con RFC 4180 e información de versión de compilación.
 
-## Derechos de autor
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center">Modo Claro</th>
+      <th align="center">Modo Oscuro</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">
+        <img src="assets/configuracion-light.png" alt="Pantalla de Configuración - Modo Claro" width="380" />
+      </td>
+      <td align="center">
+        <img src="assets/configuracion-dark.png" alt="Pantalla de Configuración - Modo Oscuro" width="380" />
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## ⚖️ Derechos de Autor y Licencia
 
 © 2026 Tomás Moroz. Todos los derechos reservados.
-
-Este repositorio presenta el proyecto y no concede por medio de este README una licencia para copiar, redistribuir o explotar comercialmente la aplicación.
