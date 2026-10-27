@@ -81,6 +81,8 @@ Finanzas Zero incorpora un generador nativo de reportes en formato PDF estándar
 - **Detalle de movimientos y paginación continua:** Listado de transacciones con fecha, descripción, categoría y monto formateado en moneda local. Incluye cálculo dinámico de capacidad por página para evitar cortes abruptos y truncamiento elíptico seguro (`…`) para notas extensas.
 - **Integración con Storage Access Framework (SAF):** Permite al usuario guardar el archivo con nombre sugerido `finanzas-zero-resumen-YYYY-MM-DD.pdf` en cualquier carpeta local o proveedor de almacenamiento en la nube.
 
+> 💡 **Documento de muestra:** Podés consultar la vista previa y descargar el archivo generado en la sección [Ejemplo de informe PDF](#-ejemplo-de-informe-pdf).
+
 ---
 
 ## ⚙️ Pantalla de Configuración
@@ -238,6 +240,30 @@ Panel de ajustes de la aplicación: selector de tema visual (Sistema, Claro, Osc
     </tr>
   </tbody>
 </table>
+
+---
+
+## 📑 Ejemplo de informe PDF
+
+Finanzas Zero genera un informe formal en formato estándar A4 (`595 x 842 pt`), optimizado para archivo digital, impresión o envío mediante mensajería. A continuación se presenta la vista previa de la primera página del documento de muestra generado directamente por la aplicación:
+
+<p align="center">
+  <img src="assets/reporte-pdf-preview.png" alt="Vista previa del informe PDF generado por Finanzas Zero" width="600" />
+</p>
+
+<p align="center">
+  📄 <strong><a href="assets/finanzas-zero-resumen-2026-10-27.pdf">Descargar o abrir el informe PDF de ejemplo (finanzas-zero-resumen-2026-10-27.pdf)</a></strong>
+</p>
+
+> ℹ️ **Nota de demostración y privacidad:**<br>
+> Todos los movimientos, importes, fechas y descripciones exhibidos en este documento son ficticios y fueron generados exclusivamente con fines de prueba y presentación visual de la aplicación. Las marcas comerciales o servicios de terceros mencionados en las notas descriptivas (tales como plataformas de transporte o streaming) se incluyen a mero título ilustrativo y no implican relación, afiliación, patrocinio ni respaldo oficial por parte de dichas empresas.
+
+### Estructura del documento exportado
+1. **Encabezado Institucional:** Identificación de Finanzas Zero, constancia de privacidad (*100% Local y Privado*), fecha y hora exacta de emisión y rango temporal evaluado.
+2. **Tarjetas de Métricas Consolidadas:** Total acumulado en pesos argentinos (ARS), cantidad de movimientos, promedio por gasto y categoría de mayor impacto presupuestario.
+3. **Distribución por Categoría:** Tabla estructurada con importes totales en ARS, porcentaje de incidencia sobre el total y cantidad de operaciones por rubro.
+4. **Detalle de Movimientos:** Grilla cronológica con marca temporal completa, descripción o nota, categoría y monto formateado en moneda local.
+5. **Pie de Página de Integridad:** Paginación continua (`Página X de Y`) y leyenda de emisión local sin conexión.
 
 ---
 
